@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css'; // global css
 import Navbar from './components/layouts/Navbar';
+import User from './components/users/Users';
+import axios from 'axios';
 
 // Creating class based app instead of function app()
 class App extends Component {
@@ -10,6 +12,21 @@ class App extends Component {
   name = 'Amit Dubey'; // class variable (use this.variablename) to render
 
   sayName = () => this.name;
+  state = {
+    users: [],
+    loading: false
+  };
+
+  async componentDidMount() {
+    // axios
+    //   .get('https://api.github.com/users')
+    //   .then(response => console.log(response.data));
+    this.setState({ loading: true });
+    const response = await axios.get(
+      `https://api.github.com/users?client_id=${process.env.APP_GITHUB_CLIENT_ID}&client_secret=${process.env.APP_GITHUB_CLIENT_SECRET}`
+    );
+    this.setState({ users: response.data, loading: false });
+  }
 
   render() {
     // const loading = false;
@@ -32,6 +49,9 @@ class App extends Component {
         {/* <h1>Hello</h1> */}
         {/* Sending props(properties) to a component */}
         <Navbar />
+        <div className='container'>
+          <User users={this.state.users} loading={this.state.loading} />
+        </div>
       </div>
     );
   }
